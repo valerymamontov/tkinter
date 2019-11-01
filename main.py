@@ -2,6 +2,7 @@ from tkinter import *
 from tkinter import filedialog as fd
 
 import openpyxl
+import os
 
 # import pandas as pd
 
@@ -9,10 +10,14 @@ import openpyxl
 def cmd_select_file():
     cmd_clear_all()
     file_name = fd.askopenfilename(filetypes=(("Excel files", "*.xls"), ("Excel files", "*.xlsx")))
-    f_name["text"] = file_name
+    fname = f"Имя файла: {os.path.basename(file_name)}"
+    dname = f"Директория: {os.path.dirname(file_name)}"
+    # dir_name["text"] = dname
+    # f_name["text"] = fname
+    f_name["text"] = f"Имя файла: {file_name}"
     func_add_text()
     # смена цвета кнопок
-    btnNEW["bg"] = "lightgreen"
+    # btnNEW["bg"] = "lightgreen"
     btnCLR["bg"] = "lightblue"
     btnGETTXT["bg"] = "lightblue"
 
@@ -44,11 +49,12 @@ def func_check_field():
 
 def func_add_text():
     if f_name["text"] and func_check_field() == 13:
-        btnNEW["bg"] = "lightgreen"
+        btnNEW["bg"] = "orange"
         btnCLR["bg"] = "lightblue"
         btnGETTXT["bg"] = "lightblue"
 
-        wb = openpyxl.load_workbook(filename=f_name["text"])
+        # wb = openpyxl.load_workbook(filename=f"{dir_name['text'][12:]}/{f_name['text'][11:]}")
+        wb = openpyxl.load_workbook(filename=f"{f_name['text'][11:]}")
         sheet = wb["Сводка и история"]
 
         def func_get_text(key):
@@ -67,9 +73,10 @@ def func_add_text():
         # for k, v in dict_a.items():
         #     print(f'{k} - {v}')
 
-        # получение номеров строк и текста по этим номерам
+        # == получение номеров строк и текста по этим номерам: == #
+        # прим.: идут в том же порядке, что и поля в окне
 
-        # ---- наименование ----
+        # ---- Наименование ----
         legalNameStart = dict_a.get("Полное наименование")
         pos1 = "B" + str(dict_a.get("Полное наименование"))
         pos1C = "C" + str(dict_a.get("Полное наименование"))
@@ -77,87 +84,142 @@ def func_add_text():
             date = str(sheet[pos1C].value)
             date = date[0:10]
             normDate = date[8:10] + "." + date[5:7] + "." + date[0:4]
-            legalNameText = sheet[pos1].value + f"(c {normDate} г.)"
+            legalNameText = f"{sheet[pos1].value} ({normDate} г.)"
         else:
             legalNameText = sheet[pos1].value
-        # ---- наименование ----
+        # ---- Наименование ----
 
-        # ---- краткое наименование ----
+        # ---- Краткое наименование ----
         legalNameEnd = dict_a.get("Краткое наименование")
         countRowsForPrim = legalNameEnd - legalNameStart
         if countRowsForPrim == 1:
             primText = ""
         else:
             if countRowsForPrim == 2:
-                pos2 = "B" + str(legalNameEnd - 1)
-                pos2C = "C" + str(legalNameEnd - 1)
-                date = str(sheet[pos2C].value)
+                pos = "B" + str(legalNameEnd - 1)
+                posC = "C" + str(legalNameEnd - 1)
+                date = str(sheet[posC].value)
                 date = date[0:10]
                 normDate = date[8:10] + "." + date[5:7] + "." + date[0:4]
-                primText = "с " + normDate + " г." + " - " + str(sheet[pos2].value)
+                primText = f"{str(sheet[pos].value)} ({normDate} г.)"
             else:
                 primText = ""
                 i = 1
                 while i < countRowsForPrim:
-                    pos2 = "B" + str(legalNameStart + i)
-                    pos2C = "C" + str(legalNameStart + i)
-                    date = str(sheet[pos2C].value)
+                    pos = "B" + str(legalNameStart + i)
+                    posC = "C" + str(legalNameStart + i)
+                    date = str(sheet[posC].value)
                     date = date[0:10]
                     normDate = date[8:10] + "." + date[5:7] + "." + date[0:4]
-                    text = "с " + normDate + " г." + " - " + str(sheet[pos2].value) + "\n"
+                    if i == (countRowsForPrim - 1):
+                        text = f"{str(sheet[pos].value)} ({normDate} г.)"
+                    else:
+                        text = f"{str(sheet[pos].value)} ({normDate} г.)\n"
                     primText += text
                     i = i + 1
-        # ---- краткое наименование ----
+        # ---- Краткое наименование ----
 
+        # ---- Дата образования, ИНН, ОГРН и др. ----
         registrationDateText = func_get_text("Дата образования")
         innText = func_get_text("ИНН")
         ogrnText = func_get_text("ОГРН")
         legalAddressText = func_get_text("Юр. адрес")
         principalActivityText = func_get_text("Основной вид деятельности")
         statedCapitalSumText = func_get_text("Уставный капитал")
+        # ---- Дата образования, ИНН, ОГРН и др. ----
 
+        # ---- Учредители ----
         uchrPosStart = dict_a.get("Учредители")
         uchrPosEnd = dict_a.get("Конечные владельцы")
         if uchrPosEnd < uchrPosStart:
+
+            # -- вот такое решение --
+            # чтобы получить позицию первого вхождения "учредителей"
+            dictTemp = {}
+            for i in range(2, 200):
+                a = "A" + str(i)
+                dictTemp[i] = sheet[a].value
+            for k, v in dictTemp.items():
+                if v == "Учредители":
+                    uchrPosStart = k
+                    break
+            # -- вот такое решение --
+
             uchrPosEnd = dict_a.get("Учредители (Росстат)")
             uchrRowsCount = uchrPosEnd - uchrPosStart
+            if uchrRowsCount == 1:
+                pos = "B" + str(uchrPosStart)
+                posC = "C" + str(uchrPosStart)
+                date = str(sheet[posC].value)
+                date = date[0:10]
+                normDate = date[8:10] + "." + date[5:7] + "." + date[0:4]
+                text = f"{str(sheet[pos].value)} ({normDate} г.)"
+                uchrText = text
+            else:
+                uchrText = ""
+                i = 1
+                while i <= uchrRowsCount:
+                    if i == 1:
+                        pos = "B" + str(uchrPosStart)
+                        posC = "C" + str(uchrPosStart)
+                    else:
+                        pos = "B" + str(uchrPosStart + i - 1)
+                        posC = "C" + str(uchrPosStart + i - 1)
+                    date = str(sheet[posC].value)
+                    date = date[0:10]
+                    normDate = date[8:10] + "." + date[5:7] + "." + date[0:4]
+                    if i == uchrRowsCount:
+                        text = f"{str(sheet[pos].value)} ({normDate} г.)"
+                    else:
+                        text = f"{str(sheet[pos].value)} ({normDate} г.)\n"
+                    uchrText += text
+                    i = i + 1
         else:
             uchrRowsCount = uchrPosEnd - uchrPosStart
             if uchrRowsCount == 2:
                 uchrText = func_get_text("Учредители")
             if uchrRowsCount > 2:
                 uchrText = ""
-                uchrRowsCount = uchrRowsCount - 1
+                uchrRowsCount = uchrRowsCount
                 i = 1
                 while i < uchrRowsCount:
-                    pos = "B" + str(uchrRowsCount + i)
-                    posC = "C" + str(uchrRowsCount + i)
+                    if i == 1:
+                        pos = "B" + str(uchrPosStart)
+                        posC = "C" + str(uchrPosStart)
+                    else:
+                        pos = "B" + str(uchrPosStart + i - 1)
+                        posC = "C" + str(uchrPosStart + i - 1)
                     date = str(sheet[posC].value)
                     date = date[0:10]
                     normDate = date[8:10] + "." + date[5:7] + "." + date[0:4]
-                    text = "с " + normDate + " г." + " - " + str(sheet[pos].value) + "\n"
-                    oldHeadsText += text
+                    if i == (uchrRowsCount - 1):
+                        text = f"{str(sheet[pos].value)} ({normDate} г.)"
+                    else:
+                        text = f"{str(sheet[pos].value)} ({normDate} г.)\n"
+                    uchrText += text
                     i = i + 1
 
-        # else:
-        #     print(f"start - {uchrPosStart}, end - {uchrPosEnd}")
-            # to make empty
+        # ---- Предыдущие собственники ----
+        uchrExText = ""
+        # ---- Предыдущие собственники ----
 
+        # ---- Держатель реестра акционеров ----
         shareholderRegisterText = func_get_text("Держатель реестра акционеров АО")
+        # ---- Держатель реестра акционеров ----
 
-        # ---- руководитель ----
+        # ---- Руководитель ----
         text = func_get_text("Генеральный директор")
         posC = "C" + str(dict_a.get("Генеральный директор"))
         if sheet[posC].value != "":
             date = str(sheet[posC].value)
             date = date[0:10]
             normDate = date[8:10] + "." + date[5:7] + "." + date[0:4]
-            headsText = f"c {normDate} г. - " + text
+            headsText = text + f" ({normDate} г.)"
         else:
             headsText = text
-        # ---- руководитель ----
+        # ---- Руководитель ----
 
-        # ---- прежние руководители ----
+        # ---- Прежние руководители ----
         oldHeadsStart = dict_a.get("Генеральный директор")
         oldHeadsEnd = dict_a.get("Основной вид деятельности")
         oldHeadsCountRows = oldHeadsEnd - oldHeadsStart
@@ -169,7 +231,7 @@ def func_add_text():
             date = str(sheet[posC].value)
             date = date[0:10]
             normDate = date[8:10] + "." + date[5:7] + "." + date[0:4]
-            text = "с " + normDate + " г." + " - " + str(sheet[pos].value) + "\n"
+            text = f"{str(sheet[pos].value)} ({normDate} г.)"
             oldHeadsText = text
         if oldHeadsCountRows > 3:
             oldHeadsText = ""
@@ -181,11 +243,15 @@ def func_add_text():
                 date = str(sheet[posC].value)
                 date = date[0:10]
                 normDate = date[8:10] + "." + date[5:7] + "." + date[0:4]
-                text = "с " + normDate + " г." + " - " + str(sheet[pos].value) + "\n"
+                if i == (oldHeadsCountRows - 1):
+                    text = f"{str(sheet[pos].value)} ({normDate} г.)"
+                else:
+                    text = f"{str(sheet[pos].value)} ({normDate} г.)\n"
                 oldHeadsText += text
                 i = i + 1
-        # ---- прежние руководители ----
+        # ---- Прежние руководители ----
 
+        # == заполнение полей == #
         legalName.insert(1.0, legalNameText)
         prim.insert(1.0, primText)
         registrationDate.insert(1.0, registrationDateText)
@@ -194,14 +260,14 @@ def func_add_text():
         legalAddress.insert(1.0, legalAddressText)
         principalActivity.insert(1.0, principalActivityText)
         statedCapitalSum.insert(1.0, statedCapitalSumText)
+        uchr.insert(1.0, uchrText)
+        uchrEx.insert(1.0, uchrExText)
         shareholderRegister.insert(1.0, shareholderRegisterText)
         heads.insert(1.0, headsText)
         oldHeads.insert(1.0, oldHeadsText)
 
-        # это вариант через pandas
-        # x_file = pd.ExcelFile(file_name)
-        # x_sheet = x_file.parse(0)
-        # var1 = x_sheet["B16"]
+        # можно обработать содержимое эксель-файла через pandas
+        # как-то примерно так: https://python-scripts.com/question/8941
 
 
 def cmd_clear_all():
@@ -223,6 +289,13 @@ def cmd_clear_all():
     btnGETTXT["bg"] = "lightgrey"
 
 
+def cmd_select_pattern():
+    file_name = fd.askopenfilename(filetypes=(("Word files", "*.doc"), ("Word files", "*.docx")))
+    patrn_name["text"] = f"Шаблон: {file_name}"
+    # смена цвета кнопок
+    btnNEW["bg"] = "lightgreen"
+
+
 def func_create_new():
     pass
 
@@ -240,89 +313,106 @@ mainmenu.add_command(label="Закрыть", command=root.destroy)
 # ======================= верхнее меню ===============================
 
 # ----------------------------------------- # мои настройки ----------
-lpx = 40                                    # отступ по X, т.е. слева
+lpx = 45                                    # отступ по X, т.е. слева
 hpy = 2                                     # отступ по Y, т.е. сверху/снизу
 lblwdth = 52                                # ширина поля
 myfont = ("Microsoft Sans Serif", "8")      # шрифт
 # ----------------------------------------- # мои настройки ----------
 
 # ======================== кнопки и поля =============================
-Label(text="Выберите отчёт из Контур-Фокуса").grid(row=0, column=0, sticky=W, pady=20, padx=10)
+Label(text="Выберите отчёт из Контур-Фокуса").grid(row=0, column=0, sticky=W, pady=10, padx=10)
 Button(text="Выбрать файл", width=45, height=1, bg="lightgrey", command=cmd_select_file).grid(
-    row=0, column=1, sticky=W, pady=20, padx=1)
+    row=0, column=1, sticky=W, pady=10, padx=1)
 
-Label(text="Имя файла:").grid(row=1, column=0, sticky=W, pady=2, padx=10)
-f_name = Label(width=38, height=1)
-f_name.grid(row=1, column=1, sticky=W, pady=2, padx=0)
+# dir_name = Label(height=1)
+# dir_name.grid(row=1, columnspan=2, column=0, sticky=W, pady=1, padx=10)
+#
+# f_name = Label(height=1)
+# f_name.grid(row=2, columnspan=2, column=0, sticky=W, pady=1, padx=10)
+
+# Label(text="Имя файла:").grid(row=2, column=0, sticky=W, pady=2, padx=10)
+# f_name = Label(width=70, height=1)
+# f_name.grid(row=2, columnspan=2, sticky=W, pady=2, padx=0)
+
+f_name = Label(height=1)
+f_name.grid(row=1, columnspan=2, column=0, sticky=W, pady=1, padx=10)
+
+Label(text="Выберите шаблон для заполнения").grid(row=2, column=0, sticky=W, pady=10, padx=10)
+Button(text="Выбрать шаблон", width=45, height=1, bg="lightgrey", command=cmd_select_pattern).grid(
+    row=2, column=1, sticky=W, pady=10, padx=1)
+
+patrn_name = Label(height=1)
+patrn_name.grid(row=3, columnspan=2, column=0, sticky=W, pady=1, padx=10)
 
 btnNEW = Button(text="Создать отчёт", width=45, height=1, bg="lightgrey", command=func_create_new)
-btnNEW.grid(row=2, columnspan=2, sticky=E, pady=10, padx=1)
+btnNEW.grid(row=4, columnspan=2, sticky=E, pady=10, padx=1)
 
 Label(text="____________________________________________")\
-    .grid(row=3, columnspan=2, column=0, sticky=W, pady=1, padx=10)
+    .grid(row=5, columnspan=2, column=0, sticky=W, pady=1, padx=10)
 
-Label(text="Наименование:").grid(row=4, column=0, sticky=E, pady=hpy, padx=lpx)
+
+Label(text="Наименование:").grid(row=6, column=0, sticky=E, pady=hpy, padx=lpx)
 legalName = Text(width=lblwdth, height=2, font=myfont)
-legalName.grid(row=4, column=1, sticky=W, pady=hpy, padx=1)
+legalName.grid(row=6, column=1, sticky=W, pady=hpy, padx=1)
 
-Label(text="Примечание:").grid(row=5, column=0, sticky=E, pady=hpy, padx=lpx)
+Label(text="Примечание:").grid(row=7, column=0, sticky=E, pady=hpy, padx=lpx)
 prim = Text(width=lblwdth, height=4, font=myfont)
-prim.grid(row=5, column=1, sticky=W, pady=hpy, padx=1)
+prim.grid(row=7, column=1, sticky=W, pady=hpy, padx=1)
 
-Label(text="Дата образования:").grid(row=6, column=0, sticky=E, pady=hpy, padx=lpx)
+Label(text="Дата образования:").grid(row=8, column=0, sticky=E, pady=hpy, padx=lpx)
 registrationDate = Text(width=20, height=1, font=myfont)
-registrationDate.grid(row=6, column=1, sticky=W, pady=hpy, padx=1)
+registrationDate.grid(row=8, column=1, sticky=W, pady=hpy, padx=1)
 
-Label(text="ИНН:").grid(row=7, column=0, sticky=E, pady=hpy, padx=lpx)
+Label(text="ИНН:").grid(row=9, column=0, sticky=E, pady=hpy, padx=lpx)
 inn = Text(width=20, height=1, font=myfont)
-inn.grid(row=7, column=1, sticky=W, pady=hpy, padx=1)
+inn.grid(row=9, column=1, sticky=W, pady=hpy, padx=1)
 
-Label(text="ОГРН:").grid(row=8, column=0, sticky=E, pady=hpy, padx=lpx)
+Label(text="ОГРН:").grid(row=10, column=0, sticky=E, pady=hpy, padx=lpx)
 ogrn = Text(width=20, height=1, font=myfont)
-ogrn.grid(row=8, column=1, sticky=W, pady=hpy, padx=1)
+ogrn.grid(row=10, column=1, sticky=W, pady=hpy, padx=1)
 
-Label(text="Адрес:").grid(row=9, column=0, sticky=E, pady=hpy, padx=lpx)
+Label(text="Адрес:").grid(row=11, column=0, sticky=E, pady=hpy, padx=lpx)
 legalAddress = Text(width=lblwdth, height=2, font=myfont)
-legalAddress.grid(row=9, column=1, sticky=W, pady=hpy, padx=1)
+legalAddress.grid(row=11, column=1, sticky=W, pady=hpy, padx=1)
 
-Label(text="ОКВЭД:").grid(row=10, column=0, sticky=E, pady=hpy, padx=lpx)
+Label(text="ОКВЭД:").grid(row=12, column=0, sticky=E, pady=hpy, padx=lpx)
 principalActivity = Text(width=lblwdth, height=1, font=myfont)
-principalActivity.grid(row=10, column=1, sticky=W, pady=hpy, padx=1)
+principalActivity.grid(row=12, column=1, sticky=W, pady=hpy, padx=1)
 
-Label(text="Уставной капитал:").grid(row=11, column=0, sticky=E, pady=hpy, padx=lpx)
+Label(text="Уставной капитал:").grid(row=13, column=0, sticky=E, pady=hpy, padx=lpx)
 statedCapitalSum = Text(width=lblwdth, height=1, font=myfont)
-statedCapitalSum.grid(row=11, column=1, sticky=W, pady=hpy, padx=1)
+statedCapitalSum.grid(row=13, column=1, sticky=W, pady=hpy, padx=1)
 
-Label(text="Учредители:").grid(row=12, column=0, sticky=E, pady=hpy, padx=lpx)
+Label(text="Учредители:").grid(row=14, column=0, sticky=E, pady=hpy, padx=lpx)
 uchr = Text(width=lblwdth, height=2, font=myfont)
-uchr.grid(row=12, column=1, sticky=W, pady=hpy, padx=1)
+uchr.grid(row=14, column=1, sticky=W, pady=hpy, padx=1)
 
-Label(text="Предыдущие собственники:").grid(row=13, column=0, sticky=E, pady=hpy, padx=lpx)
+Label(text="Предыдущие собственники:").grid(row=15, column=0, sticky=E, pady=hpy, padx=lpx)
 uchrEx = Text(width=lblwdth, height=2, font=myfont)
-uchrEx.grid(row=13, column=1, sticky=W, pady=hpy, padx=1)
+uchrEx.grid(row=15, column=1, sticky=W, pady=hpy, padx=1)
 
-Label(text="Держатель реестра акционеров:").grid(row=14, column=0, sticky=E, pady=hpy, padx=lpx)
+Label(text="Держатель реестра акционеров:").grid(row=16, column=0, sticky=E, pady=hpy, padx=lpx)
 shareholderRegister = Text(width=lblwdth, height=1, font=myfont)
-shareholderRegister.grid(row=14, column=1, sticky=W, pady=hpy, padx=1)
+shareholderRegister.grid(row=16, column=1, sticky=W, pady=hpy, padx=1)
 
-Label(text="Руководитель:").grid(row=15, column=0, sticky=E, pady=hpy, padx=lpx)
+Label(text="Руководитель:").grid(row=17, column=0, sticky=E, pady=hpy, padx=lpx)
 heads = Text(width=lblwdth, height=2, font=myfont)
-heads.grid(row=15, column=1, sticky=W, pady=hpy, padx=1)
+heads.grid(row=17, column=1, sticky=W, pady=hpy, padx=1)
 
-Label(text="Прежний руководитель:").grid(row=16, column=0, sticky=E, pady=hpy, padx=lpx)
+Label(text="Прежний руководитель:").grid(row=18, column=0, sticky=E, pady=hpy, padx=lpx)
 oldHeads = Text(width=lblwdth, height=2, font=myfont)
-oldHeads.grid(row=16, column=1, sticky=W, pady=hpy, padx=1)
+oldHeads.grid(row=18, column=1, sticky=W, pady=hpy, padx=1)
 
 Label(text="____________________________________________")\
-    .grid(columnspan=2, row=17, column=0, sticky=W, pady=1, padx=10)
+    .grid(columnspan=2, row=19, column=0, sticky=W, pady=1, padx=10)
 
 btnGETTXT = Button(text="Получить значения", width=31, height=1, bg="lightgrey", command=func_add_text)
-btnGETTXT.grid(row=18, column=0, sticky=W, pady=15, padx=10)
+btnGETTXT.grid(row=20, column=0, sticky=W, pady=15, padx=10)
 btnCLR = Button(text="Очистить все поля", width=45, height=1, bg="lightgrey", command=cmd_clear_all)
-btnCLR.grid(row=18, column=1, sticky=E, pady=15, padx=1)
+btnCLR.grid(row=20, column=1, sticky=E, pady=15, padx=1)
 # ======================== кнопки и поля =============================
 
 root.title("Автоматическое создание отчёта")
-root.geometry("600x700+300+50")
+root.geometry("620x700+300+50")
 root.resizable(False, False)
 root.mainloop()
