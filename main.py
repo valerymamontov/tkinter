@@ -1,6 +1,8 @@
 from tkinter import *
 from tkinter import filedialog as fd
 
+from docxtpl import DocxTemplate
+
 import openpyxl
 import os
 
@@ -15,6 +17,7 @@ def cmd_select_file():
     # dir_name["text"] = dname
     # f_name["text"] = fname
     f_name["text"] = f"Имя файла: {file_name}"
+    patrn_name["text"] = ""
     func_add_text()
     # смена цвета кнопок
     # btnNEW["bg"] = "lightgreen"
@@ -269,6 +272,26 @@ def func_add_text():
         # можно обработать содержимое эксель-файла через pandas
         # как-то примерно так: https://python-scripts.com/question/8941
 
+        # mydata = {}
+        #         # mydata["legalName"] = legalNameText
+        #         # mydata["prim"] = primText
+        #         # mydata["registrationDate"] = registrationDateText
+        #         # mydata["inn"] = innText
+        #         # mydata["ogrn"] = ogrnText
+        #         # mydata["legalAddress"] = legalAddressText
+        #         # mydata["principalActivity"] = principalActivityText
+        #         # mydata["statedCapitalSum"] = statedCapitalSumText
+        #         # mydata["uchr"] = uchrText
+        #         # mydata["uchrEx"] = uchrExText
+        #         # mydata["shareholderRegister"] = shareholderRegisterText
+        #         # mydata["heads"] = headsText
+        #         # mydata["oldHeads"] = oldHeadsText
+        #         # return mydata
+
+        # return legalNameText, primText, registrationDateText, innText, ogrnText, legalAddressText, \
+        #        principalActivityText, statedCapitalSumText, uchrText, uchrExText, shareholderRegisterText, \
+        #        headsText, oldHeadsText,
+
 
 def cmd_clear_all():
     legalName.delete(1.0, END)
@@ -284,6 +307,8 @@ def cmd_clear_all():
     shareholderRegister.delete(1.0, END)
     heads.delete(1.0, END)
     oldHeads.delete(1.0, END)
+
+    # после нажатия цвет кнопок изменяется:
     btnNEW["bg"] = "lightgrey"
     btnCLR["bg"] = "lightgrey"
     btnGETTXT["bg"] = "lightgrey"
@@ -297,7 +322,23 @@ def cmd_select_pattern():
 
 
 def func_create_new():
-    pass
+    doc = DocxTemplate(patrn_name["text"][8:])
+    context = {}
+    context["legalName"] = legalName.get(1.0, END)
+    context["prim"] = prim.get(1.0, END)
+    context["registrationDate"] = registrationDate.get(1.0, END)
+    context["INN"] = inn.get(1.0, END)
+    context["OGRN"] = ogrn.get(1.0, END)
+    context["legalAddress"] = legalAddress.get(1.0, END)
+    context["principalActivity"] = principalActivity.get(1.0, END)
+    context["statedCapitalSum"] = statedCapitalSum.get(1.0, END)
+    context["uchr"] = uchr.get(1.0, END)
+    context["uchrEx"] = uchrEx.get(1.0, END)
+    context["shareholderRegister"] = shareholderRegister.get(1.0, END)
+    context["heads"] = heads.get(1.0, END)
+    context["oldHeads"] = oldHeads.get(1.0, END)
+    doc.render(context)
+    doc.save("шаблон-final.docx")
 
 
 root = Tk()
