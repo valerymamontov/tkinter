@@ -21,7 +21,7 @@ Pattern.docx - Шаблон
 MyReport.docx - Итоговая справка  
 
 
-program.py - скрипт
+program.py - скрипт  
 requirements.txt - список зависимостей  
 program.exe - исполняемый файл
 
