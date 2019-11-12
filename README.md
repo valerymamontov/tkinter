@@ -9,7 +9,7 @@
 <img src="https://github.com/valerymamontov/screenshots/blob/master/tkinter.gif">
 </p>
 
-Чтобы открыть Excel-файл и считать его содержимое, я использовал [openpyxl][1].
+Чтобы открыть Excel-файл и считать его содержимое, я использовал [openpyxl][1].  
 Чтобы передать данные в документ формата Word, использовал [docxtpl][2]. На использование библиотеки docxtpl натолкнула [статья на хабре][3].  
 Чтобы программу можно было запустить под ОС Windows, файл program.py я конвертировал в program.exe при помощи [pyinstaller][4].
 
