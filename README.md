@@ -7,5 +7,6 @@
 Ежедневно готовится большое количество таких справок, приходится много "копипастить".
 
 Используя встроенную в Python библиотеку Tkinter, написал небольшую программу с графическим интерфейсом.
-
-![Image alt](https://github.com/valerymamontov/screenshots/blob/master/tkinter.gif)
+<p align="center">
+<img src="https://github.com/valerymamontov/screenshots/blob/master/tkinter.gif">
+</p>
