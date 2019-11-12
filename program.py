@@ -81,9 +81,35 @@ def cmd_add_text():
             date = str(sheet[pos1C].value)
             date = date[0:10]
             normDate = date[8:10] + "." + date[5:7] + "." + date[0:4]
-            legalNameText = f"{sheet[pos1].value} ({normDate} г.)"
+            nameOrg = sheet[pos1].value
+            nameOrg = nameOrg.replace("Общество с ограниченной ответственностью", "ООО")
+            nameOrg = nameOrg.replace("ОБЩЕСТВО С ОГРАНИЧЕННОЙ ОТВЕТСТВЕННОСТЬЮ", "ООО")
+            nameOrg = nameOrg.replace("Товарищество с ограниченной ответственностью", "ТОО")
+            nameOrg = nameOrg.replace("ТОВАРИЩЕСТВО С ОГРАНИЧЕННОЙ ОТВЕТСТВЕННОСТЬЮ", "ТОО")
+            nameOrg = nameOrg.replace("Открытое акционерное общество", "ОАО")
+            nameOrg = nameOrg.replace("ОТКРЫТОЕ АКЦИОНЕРНОЕ ОБЩЕСТВО", "ОАО")
+            nameOrg = nameOrg.replace("Закрытое акционерное общество", "ЗАО")
+            nameOrg = nameOrg.replace("ЗАКРЫТОЕ АКЦИОНЕРНОЕ ОБЩЕСТВО", "ЗАО")
+            nameOrg = nameOrg.replace("Публичное акционерное общество", "ПАО")
+            nameOrg = nameOrg.replace("ПУБЛИЧНОЕ АКЦИОНЕРНОЕ ОБЩЕСТВО", "ПАО")
+            nameOrg = nameOrg.replace("Акционерное общество", "АО")
+            nameOrg = nameOrg.replace("АКЦИОНЕРНОЕ ОБЩЕСТВО", "АО")
+            legalNameText = f"{nameOrg} ({normDate} г.)"
         else:
-            legalNameText = sheet[pos1].value
+            nameOrg = sheet[pos1].value
+            nameOrg = nameOrg.replace("Общество с ограниченной ответственностью", "ООО")
+            nameOrg = nameOrg.replace("ОБЩЕСТВО С ОГРАНИЧЕННОЙ ОТВЕТСТВЕННОСТЬЮ", "ООО")
+            nameOrg = nameOrg.replace("Товарищество с ограниченной ответственностью", "ТОО")
+            nameOrg = nameOrg.replace("ТОВАРИЩЕСТВО С ОГРАНИЧЕННОЙ ОТВЕТСТВЕННОСТЬЮ", "ТОО")
+            nameOrg = nameOrg.replace("Открытое акционерное общество", "ОАО")
+            nameOrg = nameOrg.replace("ОТКРЫТОЕ АКЦИОНЕРНОЕ ОБЩЕСТВО", "ОАО")
+            nameOrg = nameOrg.replace("Закрытое акционерное общество", "ЗАО")
+            nameOrg = nameOrg.replace("ЗАКРЫТОЕ АКЦИОНЕРНОЕ ОБЩЕСТВО", "ЗАО")
+            nameOrg = nameOrg.replace("Публичное акционерное общество", "ПАО")
+            nameOrg = nameOrg.replace("ПУБЛИЧНОЕ АКЦИОНЕРНОЕ ОБЩЕСТВО", "ПАО")
+            nameOrg = nameOrg.replace("Акционерное общество", "АО")
+            nameOrg = nameOrg.replace("АКЦИОНЕРНОЕ ОБЩЕСТВО", "АО")
+            legalNameText = nameOrg
         # ---- Наименование ----
 
         # ---- Краткое наименование ----
@@ -98,7 +124,20 @@ def cmd_add_text():
                 date = str(sheet[posC].value)
                 date = date[0:10]
                 normDate = date[8:10] + "." + date[5:7] + "." + date[0:4]
-                primText = f"{str(sheet[pos].value)} ({normDate} г.)"
+                nameOrg = str(sheet[pos].value)
+                nameOrg = nameOrg.replace("Общество с ограниченной ответственностью", "ООО")
+                nameOrg = nameOrg.replace("ОБЩЕСТВО С ОГРАНИЧЕННОЙ ОТВЕТСТВЕННОСТЬЮ", "ООО")
+                nameOrg = nameOrg.replace("Товарищество с ограниченной ответственностью", "ТОО")
+                nameOrg = nameOrg.replace("ТОВАРИЩЕСТВО С ОГРАНИЧЕННОЙ ОТВЕТСТВЕННОСТЬЮ", "ТОО")
+                nameOrg = nameOrg.replace("Открытое акционерное общество", "ОАО")
+                nameOrg = nameOrg.replace("ОТКРЫТОЕ АКЦИОНЕРНОЕ ОБЩЕСТВО", "ОАО")
+                nameOrg = nameOrg.replace("Закрытое акционерное общество", "ЗАО")
+                nameOrg = nameOrg.replace("ЗАКРЫТОЕ АКЦИОНЕРНОЕ ОБЩЕСТВО", "ЗАО")
+                nameOrg = nameOrg.replace("Публичное акционерное общество", "ПАО")
+                nameOrg = nameOrg.replace("ПУБЛИЧНОЕ АКЦИОНЕРНОЕ ОБЩЕСТВО", "ПАО")
+                nameOrg = nameOrg.replace("Акционерное общество", "АО")
+                nameOrg = nameOrg.replace("АКЦИОНЕРНОЕ ОБЩЕСТВО", "АО")
+                primText = f"{nameOrg} ({normDate} г.)"
             else:
                 primText = ""
                 i = 1
@@ -108,10 +147,23 @@ def cmd_add_text():
                     date = str(sheet[posC].value)
                     date = date[0:10]
                     normDate = date[8:10] + "." + date[5:7] + "." + date[0:4]
+                    nameOrg = str(sheet[pos].value)
+                    nameOrg = nameOrg.replace("Общество с ограниченной ответственностью", "ООО")
+                    nameOrg = nameOrg.replace("ОБЩЕСТВО С ОГРАНИЧЕННОЙ ОТВЕТСТВЕННОСТЬЮ", "ООО")
+                    nameOrg = nameOrg.replace("Товарищество с ограниченной ответственностью", "ТОО")
+                    nameOrg = nameOrg.replace("ТОВАРИЩЕСТВО С ОГРАНИЧЕННОЙ ОТВЕТСТВЕННОСТЬЮ", "ТОО")
+                    nameOrg = nameOrg.replace("Открытое акционерное общество", "ОАО")
+                    nameOrg = nameOrg.replace("ОТКРЫТОЕ АКЦИОНЕРНОЕ ОБЩЕСТВО", "ОАО")
+                    nameOrg = nameOrg.replace("Закрытое акционерное общество", "ЗАО")
+                    nameOrg = nameOrg.replace("ЗАКРЫТОЕ АКЦИОНЕРНОЕ ОБЩЕСТВО", "ЗАО")
+                    nameOrg = nameOrg.replace("Публичное акционерное общество", "ПАО")
+                    nameOrg = nameOrg.replace("ПУБЛИЧНОЕ АКЦИОНЕРНОЕ ОБЩЕСТВО", "ПАО")
+                    nameOrg = nameOrg.replace("Акционерное общество", "АО")
+                    nameOrg = nameOrg.replace("АКЦИОНЕРНОЕ ОБЩЕСТВО", "АО")
                     if i == (countRowsForPrim - 1):
-                        text = f"{str(sheet[pos].value)} ({normDate} г.)"
+                        text = f"{nameOrg} ({normDate} г.)"
                     else:
-                        text = f"{str(sheet[pos].value)} ({normDate} г.)\n"
+                        text = f"{nameOrg} ({normDate} г.)\n"
                     primText += text
                     i = i + 1
         # ---- Краткое наименование ----
