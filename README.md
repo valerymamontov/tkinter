@@ -16,9 +16,9 @@
 
 ### Содержание репозитория:
 
-"Report by Contur-Focus.xlsx" - Отчёт  
-"Pattern.docx" - Шаблон  
-"MyReport.docx" - Итоговая справка  
+Report by Contur-Focus.xlsx - Отчёт  
+Pattern.docx - Шаблон  
+MyReport.docx - Итоговая справка  
 
 
 program.py - скрипт
