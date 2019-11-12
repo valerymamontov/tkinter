@@ -10,8 +10,11 @@
 </p>
 
 Чтобы открыть Excel-файл и считать его содержимое, я использовал [openpyxl][1].
-Чтобы передать данные в документ формата Word, использовал [docxtpl][2]. На использование библиотеки натолкнула [статья на хабре][3].
+Чтобы передать данные в документ формата Word, использовал [docxtpl][2]. На использование библиотеки docxtpl натолкнула [статья на хабре][3].  
+Основной целью было создать программу, которая бы работала под ОС Windows.  
+Файл program.py конвертировал в program.exe при помощи [pyinstaller][4].
 
 [1]: https://openpyxl.readthedocs.io/en/stable/
 [2]: https://docxtpl.readthedocs.io/en/latest/
 [3]: https://habr.com/ru/post/456534/
+[4]: https://pypi.org/project/PyInstaller/
