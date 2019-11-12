@@ -8,5 +8,10 @@
 <p align="center">
 <img src="https://github.com/valerymamontov/screenshots/blob/master/tkinter.gif">
 </p>
-Чтобы открыть Excel-файл и считать его содержимое, я использовал [openpyxl](https://openpyxl.readthedocs.io/en/stable/).
-Чтобы передать данные в документ формата Word, использовал [docxtpl](https://docxtpl.readthedocs.io/en/latest/). На использование библиотеки натолкнула [статья на хабре](https://habr.com/ru/post/456534/).
+
+Чтобы открыть Excel-файл и считать его содержимое, я использовал [openpyxl][1].
+Чтобы передать данные в документ формата Word, использовал [docxtpl][2]. На использование библиотеки натолкнула [статья на хабре][3].
+
+[1]: https://openpyxl.readthedocs.io/en/stable/
+[2]: https://docxtpl.readthedocs.io/en/latest/
+[3]: https://habr.com/ru/post/456534/
