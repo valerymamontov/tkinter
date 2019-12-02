@@ -16,14 +16,14 @@
 
 ### Содержание репозитория:
 
-Report by Contur-Focus.xlsx - Отчёт  
-Pattern.docx - Шаблон  
-MyReport.docx - Итоговая справка  
+__Report by Contur-Focus.xlsx__ - Отчёт  
+__Pattern.docx__ - Шаблон  
+__MyReport.docx__ - Итоговая справка  
 
 
-program.py - скрипт  
-requirements.txt - список зависимостей  
-program.exe - исполняемый файл
+__program.py__ - скрипт  
+__requirements.txt__ - список зависимостей  
+__program.exe__ - исполняемый файл
 
 [1]: https://openpyxl.readthedocs.io/en/stable/
 [2]: https://docxtpl.readthedocs.io/en/latest/
