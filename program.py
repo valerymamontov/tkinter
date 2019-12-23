@@ -8,6 +8,7 @@ import openpyxl
 import subprocess
 
 
+# Команда на кнопку "Выбрать файл"
 def cmd_select_file():
     cmd_clear_all()
     file["text"] = ""
@@ -20,6 +21,7 @@ def cmd_select_file():
         btn_6["bg"] = "lightblue"
 
 
+# Отдельная фукция по проверке полей
 def func_check_field():
     list_fields = [
         legalName,
@@ -45,6 +47,7 @@ def func_check_field():
     return total_length
 
 
+# Команда на кнопку "Заполнить все поля"
 def cmd_add_text():
     if file["text"] and func_check_field() == 13:
         if pattern["text"]:
@@ -389,6 +392,7 @@ def cmd_add_text():
         oldHeads.insert(1.0, oldHeadsText)
 
 
+# Команда на кнопку "Очистить все поля"
 def cmd_clear_all():
     legalName.delete(1.0, END)
     prim.delete(1.0, END)
@@ -410,6 +414,7 @@ def cmd_clear_all():
     btn_6["bg"] = "lightgrey"
 
 
+# Команда на кнопку "Выбрать файл"
 def cmd_select_pattern():
     pattern["text"] = ""
     report["text"] = ""
@@ -422,6 +427,7 @@ def cmd_select_pattern():
             btn_4["bg"] = "lightgreen"
 
 
+# Комнада на кнопку "Создать отчёт"
 def cmd_create_new():
     if file["text"]:
         if pattern["text"]:
@@ -456,6 +462,7 @@ def cmd_create_new():
                     btn_4["bg"] = "lightgrey"
 
 
+# Комнада на кнопку "Посмотреть отчёт"
 def cmd_open_report():
     if report["text"]:
         report_name = report["text"][7:]
